@@ -23,7 +23,8 @@ final class Category: Model, Content, @unchecked Sendable {
 
     init() {}
     
-    init(nameCategory: String) {
+    init(id: UUID? = nil, nameCategory: String) {
+        self.id = id
         self.nameCategory = nameCategory
     }
 
