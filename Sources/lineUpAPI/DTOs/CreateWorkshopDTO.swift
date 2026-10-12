@@ -16,4 +16,15 @@ struct CreateWorkshopDTO: Content {
     var capacityMaxWorkshop: Int
     var descriptionWorkshop: String
     var categoryID: UUID
+
+    func toModel() -> Workshop {
+        Workshop(
+            nameWorkshop: nameWorkshop,
+            startTimeWorkshop: startTimeWorkshop,
+            endTimeWorkshop: endTimeWorkshop,
+            capacityMaxWorkshop: capacityMaxWorkshop,
+            descriptionWorkshop: descriptionWorkshop,
+            categoryID: categoryID
+        )
+    }
 }

@@ -12,8 +12,8 @@ struct CategoryController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let categories = routes.grouped("categories")
         categories.get(use: index)
-    }
-    
+}
+
     func index(req: Request) async throws -> [Category] {
         try await Category.query(on: req.db).all()
     }

@@ -55,15 +55,7 @@ struct WorkshopController: RouteCollection {
         }
 
 
-        let workshop = Workshop(
-            nameWorkshop: input.nameWorkshop,
-            startTimeWorkshop: input.startTimeWorkshop,
-            endTimeWorkshop: input.endTimeWorkshop,
-            capacityMaxWorkshop: input.capacityMaxWorkshop,
-            descriptionWorkshop: input.descriptionWorkshop,
-            categoryID: input.categoryID
-        )
-
+        let workshop = input.toModel()
         try await workshop.create(on: req.db)
         return workshop
 

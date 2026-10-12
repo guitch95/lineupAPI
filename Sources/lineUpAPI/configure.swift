@@ -17,6 +17,7 @@ func configure(_ app: Application) async throws {
         tlsConfiguration: nil
     ), as: .mysql)
 
+    app.migrations.add(CreateCategory())
     app.migrations.add(CreateWorkshop())
     try await app.autoMigrate()
 
