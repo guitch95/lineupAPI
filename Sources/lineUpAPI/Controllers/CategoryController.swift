@@ -11,17 +11,19 @@ import Vapor
 struct CategoryController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let categories = routes.grouped("categories")
-        categories.get(use: getAll)
+        categories.get(use: getAllCategory)
         categories.get(use: getCategoryById)
         categories.post(use: createCategory)
+        categories.delete(use: deleteCategory)
     }
 
-    func getAll(req: Request) async throws -> [Category] {
+    func getAllCategory(req: Request) async throws -> [Category] {
         try await Category.query(on: req.db).all()
     }
 
     func getCategoryById(req: Request) async throws -> Category {
-        guard let category = try await Category.find(
+        guard
+            let category = try await Category.find(
                 req.parameters.get("categoryID"),
                 on: req.db
             )
@@ -36,8 +38,8 @@ struct CategoryController: RouteCollection {
         try await category.create(on: req.db)
         return category
     }
-    
-    func deleteACategory(req: Request) async throws -> HTTPResponseStatus {
+
+    func deleteCategoryById(req: Request) async throws -> HTTPResponseStatus {
         let workshop = try await getCategoryById(req: req)
         try await workshop.delete(on: req.db)
         return .noContent
