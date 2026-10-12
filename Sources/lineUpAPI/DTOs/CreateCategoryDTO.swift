@@ -6,3 +6,11 @@
 //
 
 import Foundation
+import Fluent
+import Vapor
+
+struct CreateCategoryDTO: Content {
+    var categoryName: String
+}
+
+
