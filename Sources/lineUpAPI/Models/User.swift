@@ -14,8 +14,34 @@ final class User: Model, Content, @unchecked Sendable {
 
     @ID(key: .id)
     var id: UUID?
+    
+    @Field(key: "name_user")
+    var name: String
+    
+    @Field(key: "email_user")
+    var email: String
+    
+    @Field(key: "passwordHash_user")
+    var passwordHash: String
+    
+    @Field(key: "role_user")
+    var role: String
+    
+    @Timestamp(key: "createdAt_user", on: .create)
+    var createdAt: Date?
+    
+    @Children(for: \.$user)
+    var reservation: [Reservation]
 
     init() {}
 
+    init(id: UUID? = nil, name: String, email: String, passwordHash: String, role: String, createdAt: Date? = nil) {
+        self.id = id
+        self.name = name
+        self.email = email
+        self.passwordHash = passwordHash
+        self.role = role
+        self.createdAt = createdAt
+    }
 }
 
