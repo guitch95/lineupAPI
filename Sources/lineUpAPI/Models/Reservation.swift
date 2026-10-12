@@ -21,13 +21,16 @@ final class Reservation: Model, Content, @unchecked Sendable {
     @Parent(key: "id_user")
     var user: User
     
+    @Parent(key: "id_workshop")
+    var workshop: Workshop
+    
     init() {}
     
-    init(id: UUID? = nil, status: String, user: User) {
+    init(id: UUID? = nil, status: String, userID: UUID, workshopID: UUID) {
         self.id = id
         self.status = status
-        self.user = user
+        self.$user.id = userID
+        self.$workshop.id = workshopID
     }
-
 }
 

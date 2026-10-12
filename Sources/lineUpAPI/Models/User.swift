@@ -31,17 +31,16 @@ final class User: Model, Content, @unchecked Sendable {
     var createdAt: Date?
     
     @Children(for: \.$user)
-    var reservation: [Reservation]
+    var reservations: [Reservation]
 
     init() {}
 
-    init(id: UUID? = nil, name: String, email: String, passwordHash: String, role: String, createdAt: Date? = nil) {
+    init(id: UUID? = nil, name: String, email: String, passwordHash: String, role: String) {
         self.id = id
         self.name = name
         self.email = email
         self.passwordHash = passwordHash
         self.role = role
-        self.createdAt = createdAt
     }
 }
 
