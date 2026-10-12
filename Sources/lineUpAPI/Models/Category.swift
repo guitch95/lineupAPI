@@ -14,8 +14,18 @@ final class Category: Model, Content, @unchecked Sendable {
 
     @ID(key: .id)
     var id: UUID?
+    
+    @Field(key: "name_category")
+    var nameCategory: String
+    
+    @Children(for: \.$category)
+    var workshops: [Workshop]
 
     init() {}
+    
+    init(nameCategory: String) {
+        self.nameCategory = nameCategory
+    }
 
 }
 
