@@ -16,8 +16,6 @@ func configure(_ app: Application) async throws {
         database: Environment.get("DATABASE_NAME") ?? "vapor_database"
     ), as: .mysql)
 
-    app.migrations.add(CreateTodo())
-
     // register routes
     try routes(app)
 }
