@@ -6,3 +6,21 @@
 //
 
 import Foundation
+import Vapor
+
+struct CreateUserDTO: Content {
+    var name: String
+    var email: String
+    var passwordHash: String
+    var role: String
+    
+    func toModel() -> User {
+        let user = User(
+            name: name,
+            email: email,
+            passwordHash: passwordHash,
+            role: role
+        )
+        return user
+    }
+}
