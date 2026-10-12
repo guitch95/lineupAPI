@@ -26,7 +26,7 @@ struct CategoryController: RouteCollection {
         }
         return category
     }
-    
+
     
 }
 

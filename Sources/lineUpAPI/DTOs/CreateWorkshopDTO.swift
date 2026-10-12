@@ -5,8 +5,8 @@
 //  Created by Guillaume Richard on 12/10/2026.
 //
 
-import Foundation
 import Fluent
+import Foundation
 import Vapor
 
 struct CreateWorkshopDTO: Content {
@@ -26,5 +26,6 @@ struct CreateWorkshopDTO: Content {
             descriptionWorkshop: descriptionWorkshop,
             categoryID: categoryID
         )
+
     }
 }
