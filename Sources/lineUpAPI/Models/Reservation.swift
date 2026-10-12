@@ -14,8 +14,20 @@ final class Reservation: Model, Content, @unchecked Sendable {
 
     @ID(key: .id)
     var id: UUID?
-
+    
+    @Field(key: "status_reservation")
+    var status: String
+    
+    @Parent(key: "id_user")
+    var user: User
+    
     init() {}
+    
+    init(id: UUID? = nil, status: String, user: User) {
+        self.id = id
+        self.status = status
+        self.user = user
+    }
 
 }
 
