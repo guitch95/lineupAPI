@@ -10,7 +10,7 @@ import Vapor
 
 struct ReservationController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
-        let shows = routes.grouped("reservations")
+        let reservations = routes.grouped("reservations")
 
     }
 

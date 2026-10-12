@@ -17,9 +17,13 @@ func configure(_ app: Application) async throws {
         tlsConfiguration: nil
     ), as: .mysql)
 
+    app.migrations.add(CreateCategory())
+    app.migrations.add(CreateWorkshop())
     app.migrations.add(CreateUser())
     app.migrations.add(CreateReservation())
     
+    try await app.autoMigrate()
+
     // register routes
     try routes(app)
 }
