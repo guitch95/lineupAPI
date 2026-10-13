@@ -39,6 +39,14 @@ func configure(_ app: Application) async throws {
     app.migrations.add(CreateCategory())
     app.migrations.add(CreateWorkshop())
 
+    // Encodage et Décodage pour la DATE
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+
+    ContentConfiguration.global.use(encoder: encoder, for: .json)
+    ContentConfiguration.global.use(decoder: decoder, for: .json)
 
     try await app.autoMigrate()
 
