@@ -2,19 +2,40 @@
 //  File.swift
 //  lineUpAPI
 //
-//  Created by Canessane Ramya on 12/10/2026.
+//  Created by Canessane Ramya on 13/10/2026.
 //
 
-import Vapor
 import Fluent
+import Vapor
 
-// Réponse retournée par l'API à l'utilisateur
+// Réponse retournée à l'api par l'utilisateur
 struct UserDTO: Content {
     var id: UUID?
     var name: String
     var email: String
     var role: String
     var createdAt: Date?
+}
+
+struct CreateUserDTO: Content {
+    var name: String
+    var email: String
+    var passwordHash: String
+    var role: String
+    
+    func toModel() -> User {
+        User(
+            name: name,
+            email: email,
+            passwordHash: passwordHash,
+            role: role
+        )
+    }
+}
+
+struct UpdateUserDTO: Content {
+    var name: String?
+    var email: String?
 }
 
 extension User {

@@ -13,23 +13,28 @@ struct UserController: RouteCollection {
         let users = routes.grouped("users")
         users.get(use: index)
         users.post(use: create)
-        users.get(":id", use: show)
-        users.put(":id", use: update)
+        users.group(":id") { user in
+            users.get(use: show)
+            users.patch(use: patch)
+            users.delete(use: delete)
+        }
     }
     
-    func index(req: Request) async throws -> [User] {
-        return try await User
-            .query(on: req.db)
+    func index(req: Request) async throws -> [UserDTO] {
+        let users = try await User.query(on: req.db)
             .all()
+
+        return try users.map { try $0.toDTO() }
     }
     
-    func create(req: Request) async throws -> User {
-        let user = try req.content.decode(User.self)
+    func create(req: Request) async throws -> UserDTO {
+        let dto = try req.content.decode(CreateUserDTO.self)
+        let user = dto.toModel()
         try await user.create(on: req.db)
-        return user
+        return try user.toDTO()
     }
     
-    func show(req: Request) async throws -> User {
+    func show(req: Request) async throws -> UserDTO {
         guard let id = req.parameters.get("id", as: UUID.self) else {
             throw Abort(.badRequest, reason: "ID invalide")
         }
@@ -38,10 +43,10 @@ struct UserController: RouteCollection {
             throw Abort(.notFound)
         }
         
-        return user
+        return try user.toDTO()
     }
     
-    func update(req: Request) async throws -> User {
+    func patch(req: Request) async throws -> UserDTO {
         guard let id = req.parameters.get("id", as: UUID.self) else {
             throw Abort(.badRequest, reason: "ID invalide")
         }
@@ -50,16 +55,33 @@ struct UserController: RouteCollection {
             throw Abort(.notFound)
         }
         
-        let newUser = try req.content.decode(User.self)
+        let data = try req.content.decode(UpdateUserDTO.self)
         
-        user.name = newUser.name
-        user.email = newUser.email
-        user.passwordHash = newUser.passwordHash
-        user.role = newUser.role
-        user.createdAt = newUser.createdAt
-        user.reservations = newUser.reservations
+        if let name = data.name {
+            user.name = name
+        }
         
-        return user
+        if let email = data.email {
+            user.email = email
+        }
+        
+        try await user.update(on: req.db)
+        
+        return try user.toDTO()
+    }
+    
+    func delete(req: Request) async throws -> HTTPStatus {
+        guard let id = req.parameters.get("id", as: UUID.self) else {
+            throw Abort(.badRequest, reason: "ID invalide")
+        }
+        
+        guard let user = try await User.find(id, on: req.db) else {
+            throw Abort(.notFound)
+        }
+        
+        try await user.delete(on: req.db)
+        
+        return .noContent
     }
 }
 
