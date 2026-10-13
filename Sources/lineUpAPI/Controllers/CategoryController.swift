@@ -12,9 +12,9 @@ struct CategoryController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let categories = routes.grouped("categories")
         categories.get(use: getAllCategory)
-        categories.get(use: getCategoryById)
+        categories.get(":categoryID", use: getCategoryById)
         categories.post(use: createCategory)
-        categories.delete(use: deleteCategory)
+        categories.delete(":categoryID", use: deleteCategoryById)
     }
 
     func getAllCategory(req: Request) async throws -> [Category] {
@@ -22,11 +22,9 @@ struct CategoryController: RouteCollection {
     }
 
     func getCategoryById(req: Request) async throws -> Category {
-        guard
-            let category = try await Category.find(
+        guard let category = try await Category.find(
                 req.parameters.get("categoryID"),
-                on: req.db
-            )
+                on: req.db)
         else {
             throw Abort(.notFound)
         }
@@ -40,8 +38,8 @@ struct CategoryController: RouteCollection {
     }
 
     func deleteCategoryById(req: Request) async throws -> HTTPResponseStatus {
-        let workshop = try await getCategoryById(req: req)
-        try await workshop.delete(on: req.db)
+        let category = try await getCategoryById(req: req)
+        try await category.delete(on: req.db)
         return .noContent
     }
 
