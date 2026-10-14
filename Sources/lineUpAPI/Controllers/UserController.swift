@@ -14,21 +14,31 @@ struct UserController: RouteCollection {
         users.get(use: index)
         users.post(use: create)
         users.group(":id") { user in
-            users.get(use: show)
-            users.patch(use: patch)
-            users.delete(use: delete)
+            user.get(use: show)
+            user.patch(use: patch)
+            user.delete(use: delete)
         }
     }
     
     func index(req: Request) async throws -> [UserDTO] {
         let users = try await User.query(on: req.db)
             .all()
-
+        
         return try users.map { try $0.toDTO() }
     }
     
     func create(req: Request) async throws -> UserDTO {
+        try CreateUserDTO.validate(content: req)
+        
         let dto = try req.content.decode(CreateUserDTO.self)
+        
+        let emailAlreadyUsed = try await User.query(on: req.db)
+            .filter(\.$email == dto.email)
+            .first() != nil
+        if emailAlreadyUsed {
+            throw Abort(.conflict, reason: "Cet email est déjà utilisé.")
+        }
+        
         let user = dto.toModel()
         try await user.create(on: req.db)
         return try user.toDTO()
@@ -55,13 +65,20 @@ struct UserController: RouteCollection {
             throw Abort(.notFound)
         }
         
+        try UpdateUserDTO.validate(content: req)
         let data = try req.content.decode(UpdateUserDTO.self)
         
         if let name = data.name {
             user.name = name
         }
         
-        if let email = data.email {
+        if let email = data.email, email != user.email {
+            let emailAlreadyUsed = try await User.query(on: req.db)
+                .filter(\.$email == email)
+                .first() != nil
+            if emailAlreadyUsed {
+                throw Abort(.conflict, reason: "Cet email est déjà utilisé.")
+            }
             user.email = email
         }
         

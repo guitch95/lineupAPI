@@ -16,7 +16,7 @@ final class Reservation: Model, Content, @unchecked Sendable {
     var id: UUID?
     
     @Field(key: "status_reservation")
-    var status: String
+    var status: ReservationStatus
     
     @Parent(key: "id_user")
     var user: User
@@ -26,7 +26,7 @@ final class Reservation: Model, Content, @unchecked Sendable {
     
     init() {}
     
-    init(id: UUID? = nil, status: String, userID: UUID, workshopID: UUID) {
+    init(id: UUID? = nil, status: ReservationStatus, userID: UUID, workshopID: UUID) {
         self.id = id
         self.status = status
         self.$user.id = userID

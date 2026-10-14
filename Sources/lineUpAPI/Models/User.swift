@@ -25,7 +25,7 @@ final class User: Model, Content, @unchecked Sendable {
     var passwordHash: String
     
     @Field(key: "role_user")
-    var role: String
+    var role: UserRole
     
     @Timestamp(key: "createdAt_user", on: .create)
     var createdAt: Date?
@@ -35,7 +35,7 @@ final class User: Model, Content, @unchecked Sendable {
 
     init() {}
 
-    init(id: UUID? = nil, name: String, email: String, passwordHash: String, role: String) {
+    init(id: UUID? = nil, name: String, email: String, passwordHash: String, role: UserRole) {
         self.id = id
         self.name = name
         self.email = email

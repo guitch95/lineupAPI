@@ -13,29 +13,8 @@ struct UserDTO: Content {
     var id: UUID?
     var name: String
     var email: String
-    var role: String
+    var role: UserRole 
     var createdAt: Date?
-}
-
-struct CreateUserDTO: Content {
-    var name: String
-    var email: String
-    var passwordHash: String
-    var role: String
-    
-    func toModel() -> User {
-        User(
-            name: name,
-            email: email,
-            passwordHash: passwordHash,
-            role: role
-        )
-    }
-}
-
-struct UpdateUserDTO: Content {
-    var name: String?
-    var email: String?
 }
 
 extension User {

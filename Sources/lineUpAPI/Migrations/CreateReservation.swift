@@ -15,8 +15,8 @@ struct CreateReservation: AsyncMigration {
         try await database.schema(Reservation.schema)
             .id()
             .field("status_reservation", .string, .required)
-            .field("id_user", .uuid, .required, .references(User.schema, "id"))
-            .field("id_workshop", .uuid, .required, .references(Workshop.schema, "id"))
+            .field("id_user", .uuid, .required, .references(User.schema, "id", onDelete: .cascade))
+            .field("id_workshop", .uuid, .required, .references(Workshop.schema, "id", onDelete: .cascade))
             .create()
     }
 
