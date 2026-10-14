@@ -44,25 +44,18 @@ struct WorkshopController: RouteCollection {
 
         guard try await Category.find(input.categoryID, on: req.db) != nil else {
             throw Abort(.notFound, reason: "Catégorie introuvable")
-
-            guard input.endTimeWorkshop > input.startTimeWorkshop else {
-                throw Abort(.badRequest, reason: "L'heure de fin doit être après l'heure de début")
-            }
-
-            guard input.capacityMaxWorkshop > 0 else {
-                throw Abort(.badRequest, reason: "La capacité doit être supérieure à 0")
-            }
         }
 
-        let workshop = Workshop(
-            nameWorkshop: input.nameWorkshop,
-            startTimeWorkshop: input.startTimeWorkshop,
-            endTimeWorkshop: input.endTimeWorkshop,
-            capacityMaxWorkshop: input.capacityMaxWorkshop,
-            descriptionWorkshop: input.descriptionWorkshop,
-            categoryID: input.categoryID
-        )
+        guard input.endTimeWorkshop > input.startTimeWorkshop else {
+                throw Abort(.badRequest, reason: "L'heure de fin doit être après l'heure de début")
+        }
 
+        guard input.capacityMaxWorkshop > 0 else {
+                throw Abort(.badRequest, reason: "La capacité doit être supérieure à 0")
+        }
+
+
+        let workshop = input.toModel()
         try await workshop.create(on: req.db)
         return workshop
 
