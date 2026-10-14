@@ -12,8 +12,7 @@ struct CreateCategoryDTO: Content {
     var categoryName: String
     
     func toModel() -> Category {
-        let category = Category(nameCategory: categoryName)
-        return category
+        Category(nameCategory: categoryName)
     }
 }
 

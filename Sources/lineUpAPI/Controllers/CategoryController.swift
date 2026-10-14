@@ -32,7 +32,9 @@ struct CategoryController: RouteCollection {
     }
 
     func createCategory(req: Request) async throws -> Category {
-        let category = try req.content.decode(Category.self)
+        let input = try req.content.decode(CreateCategoryDTO.self)
+        
+        let category = input.toModel()
         try await category.create(on: req.db)
         return category
     }
