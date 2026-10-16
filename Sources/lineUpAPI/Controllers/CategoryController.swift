@@ -11,23 +11,38 @@ import Vapor
 struct CategoryController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let categories = routes.grouped("categories")
-        categories.get(use: index)
-}
+        categories.get(use: getAllCategory)
+        categories.get(":categoryID", use: getCategoryById)
+        categories.post(use: createCategory)
+        categories.delete(":categoryID", use: deleteCategoryById)
+    }
 
-    func index(req: Request) async throws -> [Category] {
+    func getAllCategory(req: Request) async throws -> [Category] {
         try await Category.query(on: req.db).all()
     }
-    
-    func show(req: Request) async throws -> Category {
+
+    func getCategoryById(req: Request) async throws -> Category {
         guard let category = try await Category.find(
-            req.parameters.get("categoryID"), on: req.db
-        ) else {
+                req.parameters.get("categoryID"),
+                on: req.db)
+        else {
             throw Abort(.notFound)
         }
         return category
     }
 
-    
+    func createCategory(req: Request) async throws -> Category {
+        let input = try req.content.decode(CreateCategoryDTO.self)
+        
+        let category = input.toModel()
+        try await category.create(on: req.db)
+        return category
+    }
+
+    func deleteCategoryById(req: Request) async throws -> HTTPResponseStatus {
+        let category = try await getCategoryById(req: req)
+        try await category.delete(on: req.db)
+        return .noContent
+    }
+
 }
-
-
