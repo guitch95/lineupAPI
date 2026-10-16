@@ -10,8 +10,7 @@ import Vapor
 struct CreateUserDTO: Content, Validatable {
     var name: String
     var email: String
-    var passwordHash: String
-    var role: UserRole // TODO (après le cours auth) : retirer role du DTO et forcer .festivalier
+    var password: String
     
     static func validations(_ validations: inout Validations) {
             validations.add("name", as: String.self, is: !.empty && .count(...50))
@@ -23,8 +22,7 @@ struct CreateUserDTO: Content, Validatable {
         User(
             name: name,
             email: email,
-            passwordHash: passwordHash,
-            role: role
+            passwordHash: password
         )
     }
 }

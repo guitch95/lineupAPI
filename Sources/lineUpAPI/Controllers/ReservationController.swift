@@ -16,6 +16,8 @@ struct ReservationController: RouteCollection {
         reservations.get("user", ":userID", use: getUserReservations)
         reservations.delete(":id", use: delete)
     }
+    
+    // Récupère toutes les réservations : GET/reservations
     func index(req: Request) async throws -> [ReservationDTO] {
         let reservations = try await Reservation.query(on: req.db)
             .with(\.$workshop)
@@ -24,6 +26,7 @@ struct ReservationController: RouteCollection {
         return try reservations.map { try $0.toDTO() }
     }
     
+    // Créer une réservation :  POST/reservations
     func create(req: Request) async throws -> ReservationDTO {
         let dto = try req.content.decode(CreateReservationDTO.self)
         
@@ -47,6 +50,7 @@ struct ReservationController: RouteCollection {
         return try reservation.toDTO()
     }
     
+    // Récupérer la réservation d'un utilisateur : GET/reservations/user/:id
     func getUserReservations(req: Request) async throws -> [ReservationDTO] {
         guard let userID = req.parameters.get("userID", as: UUID.self) else {
             throw Abort(.badRequest, reason: "ID utilisateur invalide")
@@ -61,6 +65,7 @@ struct ReservationController: RouteCollection {
         return try reservations.map { try $0.toDTO() }
     }
     
+    // Supprimer une réservation : DELETE/reservations/:id
     func delete(req: Request) async throws -> HTTPStatus {
         guard let id = req.parameters.get("id", as: UUID.self) else {
             throw Abort(.badRequest, reason: "ID réservation invalide")

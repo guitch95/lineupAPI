@@ -15,5 +15,4 @@ struct UpdateUserDTO: Content, Validatable {
             validations.add("name", as: String.self, is: !.empty && .count(...50), required: false)
             validations.add("email", as: String.self, is: .email && .count(...100), required: false)
         }
-    
 }

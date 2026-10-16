@@ -13,8 +13,6 @@ struct UserDTO: Content {
     var id: UUID?
     var name: String
     var email: String
-    var role: UserRole 
-    var createdAt: Date?
 }
 
 extension User {
@@ -22,9 +20,7 @@ extension User {
         return UserDTO(
             id: try requireID(),
             name: name,
-            email: email,
-            role: role,
-            createdAt: createdAt
+            email: email
         )
     }
 }

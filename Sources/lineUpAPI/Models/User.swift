@@ -35,7 +35,7 @@ final class User: Model, Content, @unchecked Sendable {
 
     init() {}
 
-    init(id: UUID? = nil, name: String, email: String, passwordHash: String, role: UserRole) {
+    init(id: UUID? = nil, name: String, email: String, passwordHash: String, role: UserRole = .festivalier) {
         self.id = id
         self.name = name
         self.email = email
