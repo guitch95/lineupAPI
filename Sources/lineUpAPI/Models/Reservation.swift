@@ -5,7 +5,6 @@
 //  Created by Guillaume Richard on 09/10/2026.
 //
 
-import Foundation
 import Vapor
 import Fluent
 

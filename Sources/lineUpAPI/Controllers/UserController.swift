@@ -20,6 +20,7 @@ struct UserController: RouteCollection {
         }
     }
     
+    // Récupère tous les utilisateurs : GET/users
     func index(req: Request) async throws -> [UserDTO] {
         let users = try await User.query(on: req.db)
             .all()
@@ -27,6 +28,7 @@ struct UserController: RouteCollection {
         return try users.map { try $0.toDTO() }
     }
     
+    // Créer un utilisateur : POST/users
     func create(req: Request) async throws -> UserDTO {
         try CreateUserDTO.validate(content: req)
         
@@ -44,6 +46,7 @@ struct UserController: RouteCollection {
         return try user.toDTO()
     }
     
+    // Affiche un utilisateur en passant en paramètre l'id de l'utilisateur : GET/users/:id
     func show(req: Request) async throws -> UserDTO {
         guard let id = req.parameters.get("id", as: UUID.self) else {
             throw Abort(.badRequest, reason: "ID invalide")
@@ -56,6 +59,7 @@ struct UserController: RouteCollection {
         return try user.toDTO()
     }
     
+    // Modifie partiellement les infos de l'utilisateur : PATCH/users/:id
     func patch(req: Request) async throws -> UserDTO {
         guard let id = req.parameters.get("id", as: UUID.self) else {
             throw Abort(.badRequest, reason: "ID invalide")
@@ -87,6 +91,7 @@ struct UserController: RouteCollection {
         return try user.toDTO()
     }
     
+    // Supprimer un utilisateur : DELETE/users/:id
     func delete(req: Request) async throws -> HTTPStatus {
         guard let id = req.parameters.get("id", as: UUID.self) else {
             throw Abort(.badRequest, reason: "ID invalide")
