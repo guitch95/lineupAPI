@@ -18,11 +18,11 @@ struct CreateUserDTO: Content, Validatable {
             validations.add("password", as: String.self, is: .count(8...))
         }
     
-    func toModel() -> User {
+    func toModel(passwordHash: String) -> User {
         User(
             name: name,
             email: email,
-            passwordHash: password
+            passwordHash: passwordHash
         )
     }
 }

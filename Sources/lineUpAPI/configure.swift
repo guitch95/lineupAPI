@@ -3,6 +3,7 @@ import Fluent
 import FluentMySQLDriver
 import Vapor
 import Gatekeeper
+import JWT
 
 /// configures your application
 func configure(_ app: Application) async throws {
@@ -15,6 +16,13 @@ func configure(_ app: Application) async throws {
         database: "line_up",
         tlsConfiguration: nil
     ), as: .mysql)
+
+
+    // Clé utilisée pour signer et vérifier les tokens JWT
+    guard let jwtSecret = Environment.get("JWT_SECRET") else {
+        fatalError("JWT_SECRET manquant dans le fichier .env")
+    }
+    await app.jwt.keys.add(hmac: HMACKey(from:jwtSecret), digestAlgorithm: .sha256)
 
 
     // CORS configuration to change if needed. allowedOrigin might change for the access.

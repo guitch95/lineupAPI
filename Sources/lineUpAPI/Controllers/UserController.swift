@@ -40,8 +40,8 @@ struct UserController: RouteCollection {
         if emailAlreadyUsed {
             throw Abort(.conflict, reason: "Cet email est déjà utilisé.")
         }
-        
-        let user = dto.toModel()
+        let passwordHash = try Bcrypt.hash(dto.password)
+        let user = dto.toModel(passwordHash: passwordHash)
         try await user.create(on: req.db)
         return try user.toDTO()
     }
@@ -55,7 +55,7 @@ struct UserController: RouteCollection {
         guard let user = try await User.find(id, on: req.db) else {
             throw Abort(.notFound)
         }
-        
+
         return try user.toDTO()
     }
     
@@ -64,7 +64,6 @@ struct UserController: RouteCollection {
         guard let id = req.parameters.get("id", as: UUID.self) else {
             throw Abort(.badRequest, reason: "ID invalide")
         }
-        
         guard let user = try await  User.find(id, on: req.db) else {
             throw Abort(.notFound)
         }

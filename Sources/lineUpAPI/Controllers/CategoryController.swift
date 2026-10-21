@@ -8,9 +8,6 @@
 import Fluent
 import Vapor
 
-import Fluent
-import Vapor
-
 struct CategoryController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let categories = routes.grouped("categories")
