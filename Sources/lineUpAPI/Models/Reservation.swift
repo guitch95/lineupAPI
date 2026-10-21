@@ -22,7 +22,7 @@ final class Reservation: Model, Content, @unchecked Sendable {
     
     @Parent(key: "id_workshop")
     var workshop: Workshop
-    
+
     init() {}
     
     init(id: UUID? = nil, status: ReservationStatus, userID: UUID, workshopID: UUID) {

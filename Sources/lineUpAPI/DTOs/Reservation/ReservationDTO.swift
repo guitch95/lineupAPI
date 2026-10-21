@@ -12,7 +12,8 @@ struct ReservationDTO: Content {
     let id: UUID?
     let userID: UUID
     let status: ReservationStatus
-    
+    let workshopID: UUID
+
     let nameWorkshop: String
     let startTimeWorkshop: Date
     let endTimeWorkshop: Date
@@ -29,6 +30,7 @@ extension Reservation {
             id: try requireID(),
             userID: self.$user.id,
             status: self.status,
+            workshopID: self.$workshop.id,
             nameWorkshop: workshop.nameWorkshop,
             startTimeWorkshop: workshop.startTimeWorkshop,
             endTimeWorkshop: workshop.endTimeWorkshop
