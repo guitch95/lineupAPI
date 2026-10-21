@@ -14,8 +14,11 @@ struct AuthController: RouteCollection {
         let auth = routes.grouped("auth")
         auth.post("login", use: login)
 
-    }
+        let protected = auth.grouped(JWTMiddleware())
+        protected.get("me", use: me)
 
+
+    }
     func login(req: Request) async throws -> TokenResponseDTO {
         // Décoder les données utilisateur à partir de la requête
         let dto = try req.content.decode(LoginDTO.self)
@@ -41,6 +44,13 @@ struct AuthController: RouteCollection {
         return TokenResponseDTO(token: token)
     }
 
+    func me(req: Request) async throws -> UserDTO {
+        let payload = try req.auth.require(UserPayload.self)
+        guard let user = try await User.find(payload.id, on: req.db) else {
+            throw Abort(.unauthorized, reason: "Utilisateur Introuvable")
+        }
+        return try user.toDTO()
+    }
 
 }
 
