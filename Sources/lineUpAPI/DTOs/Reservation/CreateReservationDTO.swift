@@ -9,15 +9,13 @@ import Fluent
 import Vapor
 
 struct CreateReservationDTO: Content {
-    let userID: UUID
     let workshopID: UUID
     
-    func toModel() -> Reservation {
-        let reservation = Reservation(
+    func toModel(userID: UUID) -> Reservation {
+        Reservation(
             status: .validee,
-            userID: userID,
+            userID: userID, // vient du paramètre donc du token
             workshopID: workshopID,
         )
-        return reservation
     }
 }
