@@ -7,6 +7,7 @@
 
 import Fluent
 import Vapor
+import JWT
 
 struct AuthController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
@@ -15,7 +16,7 @@ struct AuthController: RouteCollection {
 
     }
 
-    func login(req: Request) async throws -> UserDTO {
+    func login(req: Request) async throws -> TokenResponseDTO {
         // Décoder les données utilisateur à partir de la requête
         let dto = try req.content.decode(LoginDTO.self)
 
@@ -32,13 +33,12 @@ struct AuthController: RouteCollection {
             throw Abort(.unauthorized, reason: "Email ou mot de passe incorrect.") // Mot de passe incorrect
         }
 
-        return try user.toDTO()
-
-//        // Génération du token JWT
-//        let payload = UtilisateurPayload(id: utilisateur.id!)
-//        let signer = JWTSigner.hs256(key: "votre_clé_secrète") // Utilisez une clé secrète sécurisée
-//        let token = try signer.sign(payload) // Signer le payload pour générer le token
-//        return token // Retourner le token au client
+        // Génération du token JWT
+        // try : requireID() échoue si le user n'a pas d'id (normalement impossible pour un user venant de la base)
+        let payload = UserPayload(id: try user.requireID())
+        // et sign échoue si la signature rate.
+        let token = try await req.jwt.sign(payload)
+        return TokenResponseDTO(token: token)
     }
 
 
