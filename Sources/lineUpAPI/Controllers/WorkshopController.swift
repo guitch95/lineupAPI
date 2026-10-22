@@ -22,8 +22,11 @@ struct WorkshopController: RouteCollection {
 
     }
 
-    func index(req: Request) async throws -> [Workshop] {
-        try await Workshop.query(on: req.db).all()
+    func index(req: Request) async throws -> [WorkshopDTO] {
+        try await Workshop.query(on: req.db)
+            .with(\.$category)
+            .all()
+            .map { try $0.toDTO() }
     }
 
     func getWorkshopByID(req: Request) async throws -> Workshop {
