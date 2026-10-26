@@ -12,14 +12,15 @@ import Vapor
 struct WorkshopController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let workshops = routes.grouped("workshops")
+        // Tout le monde peut consulter le programme
         workshops.get(use: index)
-        workshops.post(use: createWorkshop)
-        workshops.group(":id") { workshop in
-            workshop.get(use: getWorkshopByID)
-            workshop.put(use: updateWorkshop)
-            workshop.delete(use: deleteAWorkshop)
-        }
+        workshops.get(":id", use: getWorkshopByID)
 
+        // Staff uniquement
+        let staff = workshops.grouped(JWTMiddleware(), StaffMiddleware())
+        staff.post(use: createWorkshop)
+        staff.put(":id", use: updateWorkshop)
+        staff.delete(":id", use: deleteAWorkshop)
     }
 
     func index(req: Request) async throws -> [WorkshopDTO] {
@@ -39,7 +40,7 @@ struct WorkshopController: RouteCollection {
         let input = try req.content.decode(CreateWorkshopDTO.self)
 
         guard try await Category.find(input.categoryID, on: req.db) != nil
-        else {
+                else {
             throw Abort(.notFound, reason: "Catégorie introuvable")
         }
 
@@ -70,7 +71,7 @@ struct WorkshopController: RouteCollection {
         let workshop = try await findWorkshop(req: req)
 
         guard try await Category.find(input.categoryID, on: req.db) != nil
-        else {
+                else {
             throw Abort(.badRequest, reason: "Catégorie introuvable")
         }
 
@@ -124,9 +125,10 @@ struct WorkshopController: RouteCollection {
                 .filter(\.$id == id)
                 .with(\.$category)
                 .first()
-        else {
+                else {
             throw Abort(.notFound, reason: "Workshop introuvable")
         }
         return workshop
     }
+
 }

@@ -11,10 +11,15 @@ import Vapor
 struct CategoryController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let categories = routes.grouped("categories")
+        
+        // Public
         categories.get(use: getAllCategory)
         categories.get(":categoryID", use: getCategoryById)
-        categories.post(use: createCategory)
-        categories.delete(":categoryID", use: deleteCategoryById)
+
+        // Staff uniquement
+        let staff = categories.grouped(JWTMiddleware(), StaffMiddleware())
+        staff.post(use: createCategory)
+        staff.delete(":categoryID", use: deleteCategoryById)
     }
 
     // Helper interne : renvoie le Model, pas le DTO — nécessaire pour .delete(on:)

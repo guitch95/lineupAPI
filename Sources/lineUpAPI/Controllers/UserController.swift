@@ -12,9 +12,14 @@ struct UserController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let users = routes.grouped("users")
         users.post(use: create)
+        
+        let staff = users.grouped(
+            JWTMiddleware(),
+            StaffMiddleware()
+        )
+        staff.get(use: index)
 
         let protected = users.grouped(JWTMiddleware())
-        protected.get(use: index)
         protected.group(":id") { user in
             user.get(use: show)
             user.patch(use: patch)
@@ -24,19 +29,6 @@ struct UserController: RouteCollection {
 
     // Récupère tous les utilisateurs : GET/users
     func index(req: Request) async throws -> [UserDTO] {
-        let payload = try req.auth.require(UserPayload.self)
-
-        // Charger le user connecté pour connaître son rôle actuel
-        guard let currentUser = try await User.find(payload.id, on: req.db)
-        else {
-            throw Abort(.unauthorized, reason: "Utilisateur introuvable.")
-        }
-
-        // Seul le staff peut voir tous les comptes
-        guard currentUser.role == .staff else {
-            throw Abort(.forbidden, reason: "Accès réservé au staff.")
-        }
-
         let users = try await User.query(on: req.db)
             .all()
 
