@@ -130,5 +130,4 @@ struct WorkshopController: RouteCollection {
         }
         return workshop
     }
-
 }

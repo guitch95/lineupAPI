@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "6C21ECE8-ABC4-4D3E-98C1-A4451737475A",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "lineUpAPITests",
+        "name" : "lineUpAPITests"
+      }
+    }
+  ],
+  "version" : 1
+}
